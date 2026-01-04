@@ -1,19 +1,27 @@
-# Getting Started
-Install the dependencies and run the project
-```
-npm install
-npm start
-```
+# myleads-tracker-app
 
-Head over to https://vitejs.dev/ to learn more about configuring vite
+a simple PWA for saving and managing leads. 
+
+it allows you to:
+- enter a URL to save it to a persistent list
+- view saved links
+- and clear all entries.
+
+it is also downloadable from your browser and can be saved to your device as an app.
+
 ## About Scrimba
 
-At Scrimba our goal is to create the best possible coding school at the cost of a gym membership! 💜
-If we succeed with this, it will give anyone who wants to become a software developer a realistic shot at succeeding, regardless of where they live and the size of their wallets 🎉
-The Frontend Developer Career Path aims to teach you everything you need to become a Junior Developer, or you could take a deep-dive with one of our advanced courses 🚀
+i’ve been learning JavaScript and web development with Scrimba, and it’s been a huge part of my transition to design engineering.
 
-- [Our courses](https://scrimba.com/allcourses)
-- [The Frontend Career Path](https://scrimba.com/learn/frontend)
-- [Become a Scrimba Pro member](https://scrimba.com/pricing)
+what makes it unique is how hands-on it is. you can pause a lesson and edit the code right there without moving tabs. you learn by doing.
 
-Happy Coding!
+if you’re learning to code, it's worth checking out: https://scrimba.com/?via=u0j76u.
+
+their frontend developer career path aims to teach you everything you need to become a Junior Developer
+
+- [All courses](https://scrimba.com/allcourses?via=u0j76u)
+- [The Frontend Career Path](https://scrimba.com/learn/frontend?via=u0j76u)
+
+(full disclosure: i’m a Scrimbassador — you get 20% off with the link, and i may earn a commission.)
+
+with coffee ☕️
