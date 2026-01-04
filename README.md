@@ -22,6 +22,6 @@ their frontend developer career path aims to teach you everything you need to be
 - [All courses](https://scrimba.com/allcourses?via=u0j76u)
 - [The Frontend Career Path](https://scrimba.com/learn/frontend?via=u0j76u)
 
-(full disclosure: i’m a Scrimbassador — you get 20% off with the link, and i may earn a commission.)
+(full disclosure: I'm a Scrimbassador, you get 20% off with the link, and I may earn a commission)
 
 with coffee ☕️
