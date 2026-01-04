@@ -7,7 +7,7 @@ it allows you to:
 - view saved links
 - and clear all entries.
 
-it is also downloadable from your browser and can be saved to your device as an app.
+it is fast and installable as a demo app to your device. it reliably persists leads offline and across sessions.
 
 ## About Scrimba
 
