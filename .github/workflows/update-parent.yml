@@ -1,0 +1,56 @@
+name: Update cvemann.github.io submodule
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  update-parent:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project repo (myleads-tracker-app)
+        uses: actions/checkout@v4
+
+      - name: Set up Git identity
+        run: |
+          git config --global user.name "cvemann-bot"
+          git config --global user.email "actions@github.com"
+
+      - name: Clone parent repo (cvemann.github.io)
+        run: |
+          git clone https://github.com/cvemann/cvemann.github.io.git parent-repo
+        env:
+          GIT_ASKPASS: /bin/echo
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+      - name: Update myleads-tracker submodule pointer in parent
+        working-directory: parent-repo
+        run: |
+          # Make sure submodules are initialized
+          git submodule update --init --recursive
+
+          # Move the myleads-tracker-app submodule to the latest commit from this repo
+          cd projects/myleads-tracker-app
+          git fetch origin
+          git checkout $GITHUB_SHA
+          cd ../..
+
+          # Stage the submodule change
+          git add projects/myleads-tracker-app
+
+          # Only commit if there is an actual change
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: bump myleads-tracker-app to ${GITHUB_SHA}"
+          else
+            echo "No submodule changes to commit."
+          fi
+
+      - name: Push changes to parent repo
+        if: success()
+        working-directory: parent-repo
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          # Use the token to push
+          git push https://x-access-token:${PAT_TOKEN}@github.com/cvemann/cvemann.github.io.git main
