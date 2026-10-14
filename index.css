@@ -1,51 +1,455 @@
+/* shared with the lab (lab.meetgodswill.com): graphite and paper, one cyan
+   accent, grain, a -24deg hatch, hard press shadows, square corners.
+   dark by default; the theme choice is shared with the lab. */
+:root {
+  --bg: #131516;
+  --surface: #1b1f20;
+  --line: #2c3234;
+  --text: #eef0ef;
+  --muted: #b3b9ba;
+  --faint: #8a9294;
+  --accent: #00d4ff;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .95 0 0 0 0 .95 0 0 0 1.1 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+  color-scheme: dark;
+
+  --hatch: repeating-linear-gradient(-24deg, var(--line) 0 1px, transparent 1px 5px);
+  --hatch-ink: repeating-linear-gradient(-24deg, var(--faint) 0 1px, transparent 1px 6px);
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+
+
+  /* the logo's two letters as mask images (loader and footer signature) */
+  --rule: 2px;
+  --hair: 1px;
+  --press: 4px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+:root[data-theme="light"] {
+  --bg: #fbfbfa;
+  --surface: #f1f2f0;
+  --line: #dfe2df;
+  --text: #151a1b;
+  --muted: #4a5153;
+  --faint: #656d70;
+  --accent: #007a94;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .1 0 0 0 0 .1 0 0 0 1.1 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
 body {
-    margin: 0 auto;
-    padding: 10px;
-    font-family: Arial, Helvetica, sans-serif;
-    max-width: 80vh;
+  min-height: 100vh;
+  background: var(--bg) var(--grain) fixed;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-label {
-    font-weight: regular;
-    color: #5f9341;
-    margin-bottom: 4px;
-    display: block;
+button, input { font: inherit; color: inherit; }
+
+:focus-visible { outline: none; }
+
+a:focus-visible, button:focus-visible, input:focus-visible {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
 }
 
-input {
-    max-width: 320px;
+/* the lab bar: the mark leads back to the lab; the toggle is the lab's */
+.lab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px max(20px, env(safe-area-inset-left, 0px)) 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.lab-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.lab-back .logo { width: 24px; height: auto; color: var(--text); }
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.theme-label { display: inline-block; width: 5ch; text-align: left; }
+.theme-label::before { content: "light"; }
+:root[data-theme="light"] .theme-label::before { content: "dark"; }
+
+.theme-swatch {
+  width: 12px;
+  height: 12px;
+  border: var(--hair) solid currentColor;
+  background: linear-gradient(90deg, currentColor 0 50%, transparent 50%), var(--hatch-ink);
+}
+
+@media (hover: hover) {
+  .lab-back:hover, .theme-toggle:hover { color: var(--accent); }
+}
+
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.3s; }
+
+/* the press: a plate on a hatch shadow. hover lifts it, a press pushes it
+   down onto the shadow */
+.press {
+  position: relative;
+  isolation: isolate;
+  border: var(--hair) solid var(--text);
+  background: none;
+  color: var(--text);
+  transition: transform 0.15s var(--ease);
+}
+
+/* the plate's own fill, above its shadow */
+.press::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg);
+}
+
+.press::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--hair) * -1);
+  z-index: -2;
+  background: var(--hatch-ink);
+  transform: translate(var(--press), var(--press));
+  transition: transform 0.15s var(--ease);
+}
+
+@media (hover: hover) {
+  .press:hover { transform: translate(-1px, -1px); }
+  .press:hover::before { transform: translate(calc(var(--press) + 1px), calc(var(--press) + 1px)); }
+}
+
+.press:active,
+.press.is-down { transform: translate(var(--press), var(--press)); }
+
+.press:active::before,
+.press.is-down::before { transform: none; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+/* the tracker: one column. the form on top, then the saved links as a
+   numbered ledger, newest first. */
+.tool {
     width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #5f9341;
-    margin-bottom: 4px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 48px max(20px, env(safe-area-inset-right, 0px)) 80px max(20px, env(safe-area-inset-left, 0px));
+    display: grid;
+    gap: 40px;
 }
 
-button {
-    background: #5f9341;
-    color: white;
-    padding: 10px 20px;
-    border: 1px solid #5f9341;
-    font-weight: bold;
+.intro {
+    display: grid;
+    gap: 10px;
 }
 
-#delete-btn {
-    background: white;
-    color: #5f9341;
+.eyebrow,
+.save label,
+.save-note,
+.leads-head,
+.empty {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--faint);
 }
 
-ul {
-    margin-top: 20px;
+.title {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+}
+
+.lede {
+    max-width: 52ch;
+    color: var(--muted);
+}
+
+/* the form */
+.save {
+    display: grid;
+    gap: 8px;
+}
+
+.save-row {
+    display: flex;
+    gap: 12px;
+}
+
+#input-el {
+    flex: 1;
+    min-width: 0;
+    height: 46px;
+    padding: 0 14px;
+    border: var(--hair) solid var(--line);
+    border-radius: 0;
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    transition: border-color 0.15s ease;
+}
+
+#input-el::placeholder {
+    color: var(--faint);
+}
+
+#input-el:hover {
+    border-color: var(--faint);
+}
+
+#input-el:focus-visible {
+    border-color: var(--text);
+}
+
+.save-btn {
+    flex: none;
+    height: 46px;
+    padding: 0 20px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.save-note {
+    min-height: 1.6em;
+    color: var(--accent);
+}
+
+.save.is-wrong #input-el {
+    border-color: var(--accent);
+}
+
+.motion .save.is-wrong .save-row {
+    animation: nudge 0.32s var(--ease);
+}
+
+@keyframes nudge {
+    25% { transform: translateX(-4px); }
+    60% { transform: translateX(3px); }
+}
+
+/* the ledger */
+.leads {
+    display: grid;
+    gap: 12px;
+}
+
+.leads-head {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: var(--hair) solid var(--line);
+    font-variant-numeric: tabular-nums;
+}
+
+.leads-head h2 {
+    font: inherit;
+    color: var(--muted);
+}
+
+.leads-list {
     list-style: none;
-    padding-left: 0;
+    display: grid;
 }
 
-li {
-    margin-top: 5px;
+.lead a {
+    display: grid;
+    grid-template-columns: 3ch minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 12px;
+    margin-inline: -12px;
+    color: var(--text);
+    text-decoration: none;
+    transition: background-color 0.15s ease;
 }
 
-a {
-    color: #5f9341;
+.lead-no {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
 }
 
+.lead-url {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
+.lead-url b {
+    font-weight: 500;
+}
+
+.lead-url span {
+    color: var(--faint);
+}
+
+.lead-arrow {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--faint);
+    transition: transform 0.15s var(--ease), color 0.15s ease;
+}
+
+@media (hover: hover) {
+    .lead a:hover {
+        background: var(--surface);
+    }
+
+    .lead a:hover .lead-arrow {
+        color: var(--accent);
+        transform: translate(2px, -2px);
+    }
+}
+
+.lead a:focus-visible .lead-arrow {
+    color: var(--accent);
+    transform: translate(2px, -2px);
+}
+
+/* a new lead prints in with an 8-step pass; deleted ones slide away */
+.lead.is-new {
+    animation: print 0.32s steps(8, end) both;
+}
+
+@keyframes print {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+}
+
+.lead.is-leaving {
+    animation: leave 0.26s var(--ease) both;
+}
+
+@keyframes leave {
+    to { opacity: 0; transform: translateX(-12px); }
+}
+
+.empty {
+    padding: 12px 0;
+}
+
+/* hold to delete: the hatch fills the button while it is held */
+.hold {
+    --p: 0;
+    position: relative;
+    justify-self: start;
+    margin-top: 12px;
+    padding: 9px 16px;
+    overflow: hidden;
+    border: var(--hair) solid var(--line);
+    background: none;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: none;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.hold-fill {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(-24deg, var(--accent) 0 1px, transparent 1px 4px);
+    transform: scaleX(var(--p));
+    transform-origin: 0 50%;
+}
+
+.hold-label {
+    position: relative;
+}
+
+.hold:not(.is-holding) .hold-fill {
+    transition: transform 0.2s var(--ease);
+}
+
+@media (hover: hover) {
+    .hold:hover {
+        border-color: var(--faint);
+        color: var(--text);
+    }
+}
+
+.hold.is-holding {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* arrival: the page rises once, top to bottom */
+@media (prefers-reduced-motion: no-preference) {
+    .intro > *,
+    .save,
+    .leads {
+        animation: rise 0.7s var(--ease) both;
+    }
+
+    .title { animation-delay: 0.06s; }
+    .lede { animation-delay: 0.12s; }
+    .save { animation-delay: 0.2s; }
+    .leads { animation-delay: 0.28s; }
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 28px;
+    }
+}
