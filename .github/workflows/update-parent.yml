@@ -52,5 +52,15 @@ jobs:
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          # Use the token to push
-          git push https://x-access-token:${PAT_TOKEN}@github.com/cvemann/cvemann.github.io.git main
+          # Another project may have updated the portfolio a moment ago, so
+          # pull its latest main first, put this bump on top, then push.
+          # Try up to 3 times in case several projects update at once.
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push https://x-access-token:${PAT_TOKEN}@github.com/cvemann/cvemann.github.io.git main; then
+              exit 0
+            fi
+            echo "Push rejected, trying again ($attempt)"
+            sleep 5
+          done
+          exit 1
