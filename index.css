@@ -1,268 +1,291 @@
-/* shared with the lab (lab.meetgodswill.com): graphite and paper, one cyan
-   accent, grain, a -24deg hatch, hard press shadows, square corners.
-   dark by default; the theme choice is shared with the lab. */
+/* colours: the same graphite and paper as my lab (lab.meetgodswill.com),
+   with its cyan accent. dark is the default, light comes from the toggle. */
 :root {
-  --bg: #131516;
-  --surface: #1b1f20;
-  --line: #2c3234;
-  --text: #eef0ef;
-  --muted: #b3b9ba;
-  --faint: #8a9294;
-  --accent: #00d4ff;
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .95 0 0 0 0 .95 0 0 0 1.1 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
-  color-scheme: dark;
+    --bg: #131516;
+    --surface: #1b1f20;
+    --line: #2c3234;
+    --text: #eef0ef;
+    --muted: #b3b9ba;
+    --faint: #8a9294;
+    --accent: #00d4ff;
+    --accent-deep: #00aed1;
+    --on-accent: #06181d;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .95 0 0 0 0 .95 0 0 0 1.1 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
 
-  --hatch: repeating-linear-gradient(-24deg, var(--line) 0 1px, transparent 1px 5px);
-  --hatch-ink: repeating-linear-gradient(-24deg, var(--faint) 0 1px, transparent 1px 6px);
-
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-
-
-
-  /* the logo's two letters as mask images (loader and footer signature) */
-  --rule: 2px;
-  --hair: 1px;
-  --press: 4px;
-  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --font-sans: "Inter", system-ui, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, monospace;
+    --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 :root[data-theme="light"] {
-  --bg: #fbfbfa;
-  --surface: #f1f2f0;
-  --line: #dfe2df;
-  --text: #151a1b;
-  --muted: #4a5153;
-  --faint: #656d70;
-  --accent: #007a94;
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .1 0 0 0 0 .1 0 0 0 1.1 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
-  color-scheme: light;
+    --bg: #fbfbfa;
+    --surface: #f1f2f0;
+    --line: #dfe2df;
+    --text: #151a1b;
+    --muted: #4a5153;
+    --faint: #656d70;
+    --accent: #007a94;
+    --accent-deep: #005f73;
+    --on-accent: #ffffff;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .1 0 0 0 0 .1 0 0 0 1.1 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { -webkit-text-size-adjust: 100%; }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
-  min-height: 100vh;
-  background: var(--bg) var(--grain) fixed;
-  color: var(--text);
-  font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+
+    /* style */
+    background: var(--bg) var(--grain) fixed;
+    color: var(--text);
+
+    /* typography */
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
 }
 
-button, input { font: inherit; color: inherit; }
-
-:focus-visible { outline: none; }
-
-a:focus-visible, button:focus-visible, input:focus-visible {
-  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+button,
+input {
+    font: inherit;
+    color: inherit;
 }
 
-/* the lab bar: the mark leads back to the lab; the toggle is the lab's */
+/* one focus ring for everything you can tab to */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+/* top bar: back to the lab on the left, theme switch on the right */
 .lab-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px max(20px, env(safe-area-inset-left, 0px)) 20px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--muted);
+    /* layout */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+
+    /* typography */
+    font-family: var(--font-mono);
+    font-size: 12px;
 }
 
 .lab-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.lab-back .logo { width: 24px; height: auto; color: var(--text); }
-
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 0;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.theme-label { display: inline-block; width: 5ch; text-align: left; }
-.theme-label::before { content: "light"; }
-:root[data-theme="light"] .theme-label::before { content: "dark"; }
-
-.theme-swatch {
-  width: 12px;
-  height: 12px;
-  border: var(--hair) solid currentColor;
-  background: linear-gradient(90deg, currentColor 0 50%, transparent 50%), var(--hatch-ink);
-}
-
-@media (hover: hover) {
-  .lab-back:hover, .theme-toggle:hover { color: var(--accent); }
-}
-
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.3s; }
-
-/* the press: a plate on a hatch shadow. hover lifts it, a press pushes it
-   down onto the shadow */
-.press {
-  position: relative;
-  isolation: isolate;
-  border: var(--hair) solid var(--text);
-  background: none;
-  color: var(--text);
-  transition: transform 0.15s var(--ease);
-}
-
-/* the plate's own fill, above its shadow */
-.press::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--bg);
-}
-
-.press::before {
-  content: "";
-  position: absolute;
-  inset: calc(var(--hair) * -1);
-  z-index: -2;
-  background: var(--hatch-ink);
-  transform: translate(var(--press), var(--press));
-  transition: transform 0.15s var(--ease);
-}
-
-@media (hover: hover) {
-  .press:hover { transform: translate(-1px, -1px); }
-  .press:hover::before { transform: translate(calc(var(--press) + 1px), calc(var(--press) + 1px)); }
-}
-
-.press:active,
-.press.is-down { transform: translate(var(--press), var(--press)); }
-
-.press:active::before,
-.press.is-down::before { transform: none; }
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-}
-
-/* the tracker: one column. the form on top, then the saved links as a
-   numbered ledger, newest first. */
-.tool {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 48px max(20px, env(safe-area-inset-right, 0px)) 80px max(20px, env(safe-area-inset-left, 0px));
-    display: grid;
-    gap: 40px;
-}
-
-.intro {
-    display: grid;
-    gap: 10px;
-}
-
-.eyebrow,
-.save label,
-.save-note,
-.leads-head,
-.empty {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--faint);
-}
-
-.title {
-    font-size: 32px;
-    font-weight: 500;
-    line-height: 1.15;
-    letter-spacing: -0.03em;
-}
-
-.lede {
-    max-width: 52ch;
-    color: var(--muted);
-}
-
-/* the form */
-.save {
-    display: grid;
-    gap: 8px;
-}
-
-.save-row {
     display: flex;
-    gap: 12px;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    text-decoration: none;
 }
 
-#input-el {
-    flex: 1;
-    min-width: 0;
-    height: 46px;
-    padding: 0 14px;
-    border: var(--hair) solid var(--line);
-    border-radius: 0;
-    background: var(--surface);
-    font-family: var(--font-mono);
-    font-size: 15px;
-    transition: border-color 0.15s ease;
+.lab-back .logo {
+    width: 24px;
+    height: auto;
+    color: var(--text);
 }
 
-#input-el::placeholder {
-    color: var(--faint);
-}
-
-#input-el:hover {
-    border-color: var(--faint);
-}
-
-#input-el:focus-visible {
-    border-color: var(--text);
-}
-
-.save-btn {
-    flex: none;
-    height: 46px;
-    padding: 0 20px;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.save-note {
-    min-height: 1.6em;
+.lab-back:hover,
+.theme-toggle:hover {
     color: var(--accent);
 }
 
-.save.is-wrong #input-el {
-    border-color: var(--accent);
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    cursor: pointer;
 }
 
-.motion .save.is-wrong .save-row {
-    animation: nudge 0.32s var(--ease);
+/* half filled square, like the lab */
+.theme-swatch {
+    width: 12px;
+    height: 12px;
+    border: 1px solid currentColor;
+    background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+}
+
+.theme-label {
+    width: 5ch;
+    text-align: left;
+}
+
+/* the main button: a solid block of accent with a spaced-out label */
+.btn-primary {
+    /* layout */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 12px 28px;
+
+    /* style */
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--accent);
+    background: var(--accent);
+    color: var(--on-accent);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.05s;
+
+    /* typography */
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.btn-primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+}
+
+/* while it works, a slanted hatch drifts across the button */
+.btn-primary.is-working::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(-24deg, currentColor 0 1px, transparent 1px 6px);
+    opacity: 0.25;
+    animation: drift 0.6s linear infinite;
+}
+
+@keyframes drift {
+    to {
+        background-position: 14.75px 0;
+    }
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* if someone has asked for less motion, keep everything still */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+.container {
+    /* layout */
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.title {
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+}
+
+.header p {
+    max-width: 46ch;
+    color: var(--muted);
+    font-size: 17px;
+}
+
+.header .eyebrow {
+    color: var(--faint);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+/* the card with the input */
+.card {
+    /* layout */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px;
+
+    /* style */
+    border: 1px solid var(--line);
+    background: var(--surface);
+}
+
+label {
+    color: var(--faint);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    /* layout */
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 0 14px;
+
+    /* style */
+    border: 2px solid var(--line);
+    background: var(--bg);
+    transition: border-color 0.15s;
+
+    /* typography */
+    font-family: var(--font-mono);
+    font-size: 15px;
+}
+
+input::placeholder {
+    color: var(--faint);
+}
+
+input:hover {
+    border-color: var(--faint);
+}
+
+input:focus {
+    border-color: var(--text);
+    outline: none;
+}
+
+input.is-wrong {
+    border-color: var(--accent);
+    animation: nudge 0.3s;
 }
 
 @keyframes nudge {
@@ -270,152 +293,149 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     60% { transform: translateX(3px); }
 }
 
-/* the ledger */
-.leads {
-    display: grid;
-    gap: 12px;
+.note {
+    min-height: 1.5em;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 12px;
 }
 
-.leads-head {
+/* the saved links, numbered, newest first */
+.saved {
+    display: flex;
+    flex-direction: column;
+}
+
+.saved-head {
     display: flex;
     justify-content: space-between;
     padding-bottom: 12px;
-    border-bottom: var(--hair) solid var(--line);
-    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--line);
+
+    color: var(--faint);
+    font-family: var(--font-mono);
+    font-size: 12px;
 }
 
-.leads-head h2 {
+.saved-head h2 {
     font: inherit;
     color: var(--muted);
 }
 
-.leads-list {
+ul {
     list-style: none;
-    display: grid;
 }
 
-.lead a {
-    display: grid;
-    grid-template-columns: 3ch minmax(0, 1fr) auto;
+li {
+    border-bottom: 1px solid var(--line);
+}
+
+li a {
+    /* layout */
+    display: flex;
     align-items: baseline;
-    gap: 16px;
-    padding: 12px 12px;
-    margin-inline: -12px;
+    gap: 18px;
+    padding: 14px 10px;
+    margin: 0 -10px;
+
+    /* style */
     color: var(--text);
     text-decoration: none;
-    transition: background-color 0.15s ease;
+    transition: background 0.15s;
 }
 
-.lead-no {
+li a:hover {
+    background: var(--surface);
+}
+
+.number {
+    color: var(--faint);
     font-family: var(--font-mono);
     font-size: 12px;
-    color: var(--faint);
-    font-variant-numeric: tabular-nums;
 }
 
-.lead-url {
+.link {
+    flex: 1;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.lead-url b {
     font-weight: 500;
 }
 
-.lead-url span {
+.arrow {
     color: var(--faint);
+    font-size: 13px;
+    transition: transform 0.15s var(--ease), color 0.15s;
 }
 
-.lead-arrow {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--faint);
-    transition: transform 0.15s var(--ease), color 0.15s ease;
-}
-
-@media (hover: hover) {
-    .lead a:hover {
-        background: var(--surface);
-    }
-
-    .lead a:hover .lead-arrow {
-        color: var(--accent);
-        transform: translate(2px, -2px);
-    }
-}
-
-.lead a:focus-visible .lead-arrow {
+li a:hover .arrow {
     color: var(--accent);
     transform: translate(2px, -2px);
 }
 
-/* a new lead prints in with an 8-step pass; deleted ones slide away */
-.lead.is-new {
-    animation: print 0.32s steps(8, end) both;
+/* a new lead prints in from the left, in 8 steps */
+li.is-new {
+    animation: print 0.32s steps(8) both;
 }
 
 @keyframes print {
-    from { clip-path: inset(0 100% 0 0); }
-    to { clip-path: inset(0 0 0 0); }
+    from {
+        clip-path: inset(0 100% 0 0);
+    }
+    to {
+        clip-path: inset(0 0 0 0);
+    }
 }
 
-.lead.is-leaving {
-    animation: leave 0.26s var(--ease) both;
+/* when everything is deleted, the list slides away */
+ul.is-leaving li {
+    animation: leave 0.3s var(--ease) both;
 }
 
 @keyframes leave {
-    to { opacity: 0; transform: translateX(-12px); }
+    to {
+        opacity: 0;
+        transform: translateX(-16px);
+    }
 }
 
 .empty {
-    padding: 12px 0;
-}
-
-/* hold to delete: the hatch fills the button while it is held */
-.hold {
-    --p: 0;
-    position: relative;
-    justify-self: start;
-    margin-top: 12px;
-    padding: 9px 16px;
-    overflow: hidden;
-    border: var(--hair) solid var(--line);
-    background: none;
-    color: var(--muted);
+    padding: 16px 0;
+    color: var(--faint);
     font-family: var(--font-mono);
     font-size: 12px;
+}
+
+/* hold to delete: the slanted lines fill the button while you hold it */
+.hold {
+    --progress: 0%;
+
+    /* layout */
+    position: relative;
+    align-self: flex-start;
+    margin-top: 20px;
+    padding: 10px 18px;
+    overflow: hidden;
+
+    /* style */
+    border: 2px solid var(--line);
+    background: none;
+    color: var(--muted);
     cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
-    -webkit-touch-callout: none;
     touch-action: none;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition: border-color 0.15s, color 0.15s;
+
+    /* typography */
+    font-family: var(--font-mono);
+    font-size: 12px;
 }
 
-.hold-fill {
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(-24deg, var(--accent) 0 1px, transparent 1px 4px);
-    transform: scaleX(var(--p));
-    transform-origin: 0 50%;
-}
-
-.hold-label {
-    position: relative;
-}
-
-.hold:not(.is-holding) .hold-fill {
-    transition: transform 0.2s var(--ease);
-}
-
-@media (hover: hover) {
-    .hold:hover {
-        border-color: var(--faint);
-        color: var(--text);
-    }
+.hold:hover {
+    border-color: var(--faint);
+    color: var(--text);
 }
 
 .hold.is-holding {
@@ -423,33 +443,60 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     color: var(--text);
 }
 
+.hold-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--progress);
+    background: repeating-linear-gradient(-24deg, var(--accent) 0 1px, transparent 1px 4px);
+}
+
+.hold-label {
+    position: relative;
+}
+
 [hidden] {
     display: none !important;
 }
 
-/* arrival: the page rises once, top to bottom */
-@media (prefers-reduced-motion: no-preference) {
-    .intro > *,
-    .save,
-    .leads {
-        animation: rise 0.7s var(--ease) both;
-    }
+/* the page rises in once when it opens */
+.header,
+.card,
+.saved {
+    animation: rise 0.7s var(--ease) both;
+}
 
-    .title { animation-delay: 0.06s; }
-    .lede { animation-delay: 0.12s; }
-    .save { animation-delay: 0.2s; }
-    .leads { animation-delay: 0.28s; }
+.card {
+    animation-delay: 0.1s;
+}
+
+.saved {
+    animation-delay: 0.2s;
 }
 
 @keyframes rise {
     from {
         opacity: 0;
-        transform: translateY(8px);
+        transform: translateY(10px);
     }
 }
 
-@media (max-width: 480px) {
+/* phones */
+@media (max-width: 500px) {
     .title {
-        font-size: 28px;
+        font-size: 38px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .input-row {
+        flex-direction: column;
+    }
+
+    input {
+        flex: none;
     }
 }

@@ -1,178 +1,213 @@
-import { watchLeads, saveLead, deleteAllLeads } from "./store.js"
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js"
+import {
+    getDatabase,
+    ref,
+    push,
+    onValue,
+    remove
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js"
 
-// Theme toggle: dark by default; the choice is shared with the lab.
-(() => {
-  const button = document.querySelector(".theme-toggle");
-  if (!button) return;
-  const root = document.documentElement;
-  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
-  const label = () => button.setAttribute("aria-label", root.dataset.theme === "light" ? "Switch to dark mode" : "Switch to light mode");
-  function apply(theme) {
-    if (theme === "light") root.dataset.theme = "light";
-    else delete root.dataset.theme;
-    try { localStorage.setItem("theme", theme); } catch (e) {}
-    label();
-  }
-  button.addEventListener("click", () => {
-    const next = root.dataset.theme === "light" ? "dark" : "light";
-    if (document.startViewTransition && !reduceMotion.matches) document.startViewTransition(() => apply(next));
-    else apply(next);
-  });
-  label();
-})();
+const firebaseConfig = {
+    databaseURL: "https://my-leads-tracker-d2c8f-default-rtdb.europe-west1.firebasedatabase.app/"
+}
 
-const form = document.getElementById("save-form")
+const app = initializeApp(firebaseConfig)
+const database = getDatabase(app)
+const referenceInDB = ref(database, "leads")
+
+// console.log(firebaseConfig.databaseURL)
+
+
+// let myLeads = []
 const inputEl = document.getElementById("input-el")
-const note = document.getElementById("save-note")
+const inputBtn = document.getElementById("input-btn")
 const ulEl = document.getElementById("ul-el")
+const deleteBtn = document.getElementById("delete-btn")
 const countEl = document.getElementById("count")
 const emptyEl = document.getElementById("empty")
-const deleteBtn = document.getElementById("delete-btn")
-const motion = document.documentElement.classList.contains("motion")
+const noteEl = document.getElementById("note")
+// const leadsFromLocalStorage = JSON.parse( localStorage.getItem("myLeads") )
+// const tabBtn = document.getElementById("tab-btn")
 
-let known = null // keys already on screen, so only new leads print in
+// if (leadsFromLocalStorage) {
+//     myLeads = leadsFromLocalStorage
+//     render(myLeads)
+// }
 
-// accept "example.com" as well as full links; only web links are kept
-function normalise(value) {
-    const text = value.trim()
-    if (!text) return null
-    const withScheme = /^[a-z][a-z0-9+.-]*:/i.test(text) ? text : "https://" + text
-    try {
-        const url = new URL(withScheme)
-        if (url.protocol !== "http:" && url.protocol !== "https:") return null
-        if (!url.hostname.includes(".")) return null
-        return url.href
-    } catch (e) {
-        return null
+// tabBtn.addEventListener("click", function(){    
+//     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+//         myLeads.push(tabs[0].url)
+//         localStorage.setItem("myLeads", JSON.stringify(myLeads) )
+//         render(myLeads)
+//     })
+// })
+
+// how many leads were on screen last time, so a new one can animate in
+let lastCount = -1
+
+// I build each list item with createElement instead of innerHTML, so a
+// saved link can only ever show up as text, never run as code
+function render(leads) {
+    ulEl.textContent = ""
+
+    // newest first
+    for (let i = leads.length - 1; i >= 0; i--) {
+        const li = document.createElement("li")
+        const a = document.createElement("a")
+        a.href = leads[i]
+        a.target = "_blank"
+        a.rel = "noopener"
+
+        const number = document.createElement("span")
+        number.className = "number"
+        number.textContent = String(i + 1).padStart(2, "0")
+
+        const link = document.createElement("span")
+        link.className = "link"
+        let shortLink = leads[i].replace("https://", "").replace("http://", "").replace("www.", "")
+        if (shortLink.endsWith("/")) {
+            shortLink = shortLink.slice(0, -1)
+        }
+        link.textContent = shortLink
+
+        const arrow = document.createElement("span")
+        arrow.className = "arrow"
+        arrow.textContent = "↗"
+
+        a.append(number, link, arrow)
+        li.append(a)
+        ulEl.append(li)
     }
-}
 
-function row(key, href, index, total) {
-    const li = document.createElement("li")
-    li.className = "lead"
-    li.dataset.key = key
-    const a = document.createElement("a")
-    a.href = href
-    a.target = "_blank"
-    a.rel = "noopener"
+    // the newest lead prints in, but only when one was just added
+    if (lastCount !== -1 && leads.length > lastCount) {
+        ulEl.firstChild.classList.add("is-new")
+    }
+    lastCount = leads.length
 
-    const no = document.createElement("span")
-    no.className = "lead-no"
-    no.textContent = String(total - index).padStart(2, "0")
-
-    let host = href
-    let rest = ""
-    try {
-        const url = new URL(href)
-        host = url.hostname.replace(/^www\./, "")
-        rest = (url.pathname === "/" ? "" : url.pathname) + url.search
-    } catch (e) {}
-
-    const name = document.createElement("span")
-    name.className = "lead-url"
-    const strong = document.createElement("b")
-    strong.textContent = host
-    const path = document.createElement("span")
-    path.textContent = rest
-    name.append(strong, path)
-
-    const arrow = document.createElement("span")
-    arrow.className = "lead-arrow"
-    arrow.setAttribute("aria-hidden", "true")
-    arrow.textContent = "↗"
-
-    a.append(no, name, arrow)
-    li.append(a)
-    return li
-}
-
-function render(entries) {
-    const leads = entries.slice().reverse() // newest first
-    const items = leads.map(([key, href], i) => {
-        const li = row(key, String(href), i, leads.length)
-        if (known && !known.has(key) && motion) li.classList.add("is-new")
-        return li
-    })
-    ulEl.replaceChildren(...items)
-    known = new Set(leads.map(([key]) => key))
-    countEl.textContent = leads.length === 1 ? "1 lead" : `${leads.length} leads`
+    countEl.textContent = leads.length + (leads.length === 1 ? " lead" : " leads")
     emptyEl.hidden = leads.length > 0
     deleteBtn.hidden = leads.length === 0
 }
 
-watchLeads(render)
+onValue(referenceInDB, function (snapshot) {
+    const snapshotDoesExist = snapshot.exists()
+    if (snapshotDoesExist) {
+        const snapshotValues = snapshot.val()
+        const leads = Object.values(snapshotValues)
+        render(leads)
+    } else {
+        render([])
+    }
+})
 
-form.addEventListener("submit", (e) => {
-    e.preventDefault()
-    const href = normalise(inputEl.value)
-    if (!href) {
-        note.textContent = inputEl.value.trim() ? "That doesn't look like a web link." : "Enter a link first."
-        form.classList.remove("is-wrong")
-        void form.offsetWidth
-        form.classList.add("is-wrong")
-        inputEl.focus()
+// "example.com" becomes "https://example.com"; anything without a dot or
+// with spaces isn't a link
+function fixLink(text) {
+    text = text.trim()
+    if (text === "" || text.includes(" ") || !text.includes(".")) {
+        return ""
+    }
+    if (!text.startsWith("http://") && !text.startsWith("https://")) {
+        text = "https://" + text
+    }
+    return text
+}
+
+function saveInput() {
+    const link = fixLink(inputEl.value)
+    if (link === "") {
+        noteEl.textContent = inputEl.value.trim() === "" ? "Enter a link first." : "That doesn't look like a link."
+        inputEl.classList.add("is-wrong")
         return
     }
-    note.textContent = ""
-    form.classList.remove("is-wrong")
-    saveLead(href)
+    noteEl.textContent = ""
+    inputEl.classList.remove("is-wrong")
+    push(referenceInDB, link)
     inputEl.value = ""
-})
-
-inputEl.addEventListener("input", () => {
-    if (note.textContent) note.textContent = ""
-    form.classList.remove("is-wrong")
-})
-
-// Delete all: press and hold for a second while the hatch fills the
-// button. Letting go early cancels it.
-const HOLD = 1000
-let holdStart = 0
-let holdFrame = 0
-
-function setProgress(p) {
-    deleteBtn.style.setProperty("--p", p.toFixed(3))
 }
 
-function startHold(e) {
-    if (holdStart || (e.type === "keydown" && e.key !== " " && e.key !== "Enter")) return
-    if (e.type === "keydown") e.preventDefault()
-    holdStart = performance.now()
-    deleteBtn.classList.add("is-holding")
-    const step = (now) => {
-        const p = Math.min(1, (now - holdStart) / HOLD)
-        setProgress(p)
-        if (p < 1) holdFrame = requestAnimationFrame(step)
-        else finishHold()
+inputBtn.addEventListener("click", saveInput)
+
+inputEl.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        saveInput()
     }
-    holdFrame = requestAnimationFrame(step)
+})
+
+inputEl.addEventListener("input", function () {
+    noteEl.textContent = ""
+    inputEl.classList.remove("is-wrong")
+})
+
+// delete all: hold the button for a second. the slanted lines fill it
+// while you hold, and letting go early cancels it
+let holdTimer = null
+let progress = 0
+
+function startHold(event) {
+    if (event.type === "keydown" && event.key !== " " && event.key !== "Enter") return
+    if (holdTimer) return
+    event.preventDefault()
+    deleteBtn.classList.add("is-holding")
+
+    holdTimer = setInterval(function () {
+        progress = progress + 2
+        deleteBtn.style.setProperty("--progress", progress + "%")
+        if (progress >= 100) {
+            stopHold()
+            deleteAll()
+        }
+    }, 20)
 }
 
-function cancelHold() {
-    if (!holdStart) return
-    cancelAnimationFrame(holdFrame)
-    holdStart = 0
+function stopHold() {
+    clearInterval(holdTimer)
+    holdTimer = null
+    progress = 0
     deleteBtn.classList.remove("is-holding")
-    setProgress(0)
+    deleteBtn.style.setProperty("--progress", "0%")
 }
 
-function finishHold() {
-    holdStart = 0
-    deleteBtn.classList.remove("is-holding")
-    const rows = [...ulEl.children]
-    if (motion) rows.forEach((li, i) => {
-        li.style.animationDelay = `${i * 30}ms`
-        li.classList.add("is-leaving")
-    })
-    setTimeout(() => {
-        deleteAllLeads()
-        setProgress(0)
-    }, motion ? 260 + rows.length * 30 : 0)
+function deleteAll() {
+    // the leads slide away first, then they're removed
+    ulEl.classList.add("is-leaving")
+    setTimeout(function () {
+        remove(referenceInDB)
+        ulEl.classList.remove("is-leaving")
+    }, 300)
 }
 
 deleteBtn.addEventListener("pointerdown", startHold)
+deleteBtn.addEventListener("pointerup", stopHold)
+deleteBtn.addEventListener("pointerleave", stopHold)
 deleteBtn.addEventListener("keydown", startHold)
-;["pointerup", "pointerleave", "pointercancel"].forEach((type) => deleteBtn.addEventListener(type, cancelHold))
-deleteBtn.addEventListener("keyup", cancelHold)
-deleteBtn.addEventListener("blur", cancelHold)
-deleteBtn.addEventListener("contextmenu", (e) => e.preventDefault())
+deleteBtn.addEventListener("keyup", stopHold)
+
+// theme switch: dark is the default. the choice is saved, so the lab
+// and every project open in the same theme
+const themeButton = document.querySelector(".theme-toggle")
+const themeLabel = document.querySelector(".theme-label")
+
+function showTheme() {
+    if (document.documentElement.dataset.theme === "light") {
+        themeLabel.textContent = "dark"
+        themeButton.setAttribute("aria-label", "Switch to dark mode")
+    } else {
+        themeLabel.textContent = "light"
+        themeButton.setAttribute("aria-label", "Switch to light mode")
+    }
+}
+
+themeButton.addEventListener("click", function () {
+    if (document.documentElement.dataset.theme === "light") {
+        delete document.documentElement.dataset.theme
+        localStorage.setItem("theme", "dark")
+    } else {
+        document.documentElement.dataset.theme = "light"
+        localStorage.setItem("theme", "light")
+    }
+    showTheme()
+})
+
+showTheme()
