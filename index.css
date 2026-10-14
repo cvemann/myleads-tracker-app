@@ -79,7 +79,7 @@ input:focus-visible {
 .lab-back {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     color: var(--muted);
     text-decoration: none;
 }
