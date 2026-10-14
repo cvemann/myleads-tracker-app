@@ -1,51 +1,502 @@
+/* colours: the same graphite and paper as my lab (lab.meetgodswill.com),
+   with its cyan accent. dark is the default, light comes from the toggle. */
+:root {
+    --bg: #131516;
+    --surface: #1b1f20;
+    --line: #2c3234;
+    --text: #eef0ef;
+    --muted: #b3b9ba;
+    --faint: #8a9294;
+    --accent: #00d4ff;
+    --accent-deep: #00aed1;
+    --on-accent: #06181d;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .95 0 0 0 0 .95 0 0 0 1.1 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+
+    --font-sans: "Inter", system-ui, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, monospace;
+    --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+:root[data-theme="light"] {
+    --bg: #fbfbfa;
+    --surface: #f1f2f0;
+    --line: #dfe2df;
+    --text: #151a1b;
+    --muted: #4a5153;
+    --faint: #656d70;
+    --accent: #007a94;
+    --accent-deep: #005f73;
+    --on-accent: #ffffff;
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .1 0 0 0 0 .1 0 0 0 1.1 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
+    min-height: 100vh;
+
+    /* style */
+    background: var(--bg) var(--grain) fixed;
+    color: var(--text);
+
+    /* typography */
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+button,
+input {
+    font: inherit;
+    color: inherit;
+}
+
+/* one focus ring for everything you can tab to */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+/* top bar: back to the lab on the left, theme switch on the right */
+.lab-bar {
+    /* layout */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+
+    /* typography */
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.lab-back {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.lab-back .logo {
+    width: 24px;
+    height: auto;
+    color: var(--text);
+}
+
+.lab-back:hover,
+.theme-toggle:hover {
+    color: var(--accent);
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* half filled square, like the lab */
+.theme-swatch {
+    width: 12px;
+    height: 12px;
+    border: 1px solid currentColor;
+    background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+}
+
+.theme-label {
+    width: 5ch;
+    text-align: left;
+}
+
+/* the main button: a solid block of accent with a spaced-out label */
+.btn-primary {
+    /* layout */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 12px 28px;
+
+    /* style */
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--accent);
+    background: var(--accent);
+    color: var(--on-accent);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.05s;
+
+    /* typography */
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.btn-primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+}
+
+/* while it works, a slanted hatch drifts across the button */
+.btn-primary.is-working::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(-24deg, currentColor 0 1px, transparent 1px 6px);
+    opacity: 0.25;
+    animation: drift 0.6s linear infinite;
+}
+
+@keyframes drift {
+    to {
+        background-position: 14.75px 0;
+    }
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* if someone has asked for less motion, keep everything still */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+.container {
+    /* layout */
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    max-width: 620px;
     margin: 0 auto;
-    padding: 10px;
-    font-family: Arial, Helvetica, sans-serif;
-    max-width: 80vh;
+    padding: 40px 20px 80px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.title {
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+}
+
+.header p {
+    max-width: 46ch;
+    color: var(--muted);
+    font-size: 17px;
+}
+
+.header .eyebrow {
+    color: var(--faint);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+/* the card with the input */
+.card {
+    /* layout */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px;
+
+    /* style */
+    border: 1px solid var(--line);
+    background: var(--surface);
 }
 
 label {
-    font-weight: regular;
-    color: #5f9341;
-    margin-bottom: 4px;
-    display: block;
+    color: var(--faint);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
 }
 
 input {
-    max-width: 320px;
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #5f9341;
-    margin-bottom: 4px;
+    /* layout */
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 0 14px;
+
+    /* style */
+    border: 2px solid var(--line);
+    background: var(--bg);
+    transition: border-color 0.15s;
+
+    /* typography */
+    font-family: var(--font-mono);
+    font-size: 15px;
 }
 
-button {
-    background: #5f9341;
-    color: white;
-    padding: 10px 20px;
-    border: 1px solid #5f9341;
-    font-weight: bold;
+input::placeholder {
+    color: var(--faint);
 }
 
-#delete-btn {
-    background: white;
-    color: #5f9341;
+input:hover {
+    border-color: var(--faint);
+}
+
+input:focus {
+    border-color: var(--text);
+    outline: none;
+}
+
+input.is-wrong {
+    border-color: var(--accent);
+    animation: nudge 0.3s;
+}
+
+@keyframes nudge {
+    25% { transform: translateX(-4px); }
+    60% { transform: translateX(3px); }
+}
+
+.note {
+    min-height: 1.5em;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+/* the saved links, numbered, newest first */
+.saved {
+    display: flex;
+    flex-direction: column;
+}
+
+.saved-head {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+
+    color: var(--faint);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.saved-head h2 {
+    font: inherit;
+    color: var(--muted);
 }
 
 ul {
-    margin-top: 20px;
     list-style: none;
-    padding-left: 0;
 }
 
 li {
-    margin-top: 5px;
+    border-bottom: 1px solid var(--line);
 }
 
-a {
-    color: #5f9341;
+li a {
+    /* layout */
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    padding: 14px 10px;
+    margin: 0 -10px;
+
+    /* style */
+    color: var(--text);
+    text-decoration: none;
+    transition: background 0.15s;
 }
 
+li a:hover {
+    background: var(--surface);
+}
 
+.number {
+    color: var(--faint);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.link {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.arrow {
+    color: var(--faint);
+    font-size: 13px;
+    transition: transform 0.15s var(--ease), color 0.15s;
+}
+
+li a:hover .arrow {
+    color: var(--accent);
+    transform: translate(2px, -2px);
+}
+
+/* a new lead prints in from the left, in 8 steps */
+li.is-new {
+    animation: print 0.32s steps(8) both;
+}
+
+@keyframes print {
+    from {
+        clip-path: inset(0 100% 0 0);
+    }
+    to {
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* when everything is deleted, the list slides away */
+ul.is-leaving li {
+    animation: leave 0.3s var(--ease) both;
+}
+
+@keyframes leave {
+    to {
+        opacity: 0;
+        transform: translateX(-16px);
+    }
+}
+
+.empty {
+    padding: 16px 0;
+    color: var(--faint);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+/* hold to delete: the slanted lines fill the button while you hold it */
+.hold {
+    --progress: 0%;
+
+    /* layout */
+    position: relative;
+    align-self: flex-start;
+    margin-top: 20px;
+    padding: 10px 18px;
+    overflow: hidden;
+
+    /* style */
+    border: 2px solid var(--line);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    transition: border-color 0.15s, color 0.15s;
+
+    /* typography */
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.hold:hover {
+    border-color: var(--faint);
+    color: var(--text);
+}
+
+.hold.is-holding {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+.hold-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--progress);
+    background: repeating-linear-gradient(-24deg, var(--accent) 0 1px, transparent 1px 4px);
+}
+
+.hold-label {
+    position: relative;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* the page rises in once when it opens */
+.header,
+.card,
+.saved {
+    animation: rise 0.7s var(--ease) both;
+}
+
+.card {
+    animation-delay: 0.1s;
+}
+
+.saved {
+    animation-delay: 0.2s;
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+/* phones */
+@media (max-width: 500px) {
+    .title {
+        font-size: 38px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .input-row {
+        flex-direction: column;
+    }
+
+    input {
+        flex: none;
+    }
+}
